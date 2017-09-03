@@ -22,16 +22,24 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	// shoot them up !!!
+	virtual void Shoot_Begin();
+
+	virtual void Shoot_End();
+
+
 private:
 
 	// the current hp of the mech
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties", meta = (AllowPrivateAccess = "true"))
 	float m_CurrentHp;
 
 	// the max hp of the mech
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties", meta = (AllowPrivateAccess = "true"))
 	float m_MaxHp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties", meta = (AllowPrivateAccess = "true"))
+	bool m_IsShooting;
 	
 
 

@@ -32,4 +32,16 @@ void AMech_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
     
 
 }
+void AMech_Base::Shoot_Begin()
+{
+	// wait to implment
+	m_IsShooting = true;
 
+}
+void AMech_Base::Shoot_End()
+{
+	// wait to implment
+	m_IsShooting = false;
+
+
+}

@@ -20,15 +20,17 @@ void AMech_PlayerControlled::SetupPlayerInputComponent(class UInputComponent* Pl
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMech_PlayerControlled::Move_Forward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AMech_PlayerControlled::Move_Right);
 	PlayerInputComponent->BindAxis("TurnCamera", this, &AMech_PlayerControlled::TurnCamera);
-	PlayerInputComponent->BindAction("Shoot",IE_Pressed, this, &AMech_PlayerControlled::Shoot);
+	PlayerInputComponent->BindAction("Shoot",IE_Pressed, this, &AMech_PlayerControlled::Shoot_Begin);
+	PlayerInputComponent->BindAction("Shoot", IE_Released, this, &AMech_PlayerControlled::Shoot_End);
+
 }
 
 void AMech_PlayerControlled::Move_Forward(float direction)
 {
-	// wait to implment
 	if (direction)
 	{
 		AddMovementInput(GetActorForwardVector(), direction * m_MoveSpeed * GetWorld()->DeltaTimeSeconds);
+		// make camera shake during the character movement 
 		UGameplayStatics::PlayWorldCameraShake(this, m_CameraShake, m_PlayerCamera->GetComponentLocation(), 0, 1000);
 	}
 
@@ -36,7 +38,6 @@ void AMech_PlayerControlled::Move_Forward(float direction)
 
 void AMech_PlayerControlled::Move_Right(float direction)
 {
-	// wait to implment
 	if (direction)
 	{
 		AddMovementInput(GetActorRightVector(), direction * m_MoveSpeed * GetWorld()->DeltaTimeSeconds);
@@ -54,8 +55,16 @@ void AMech_PlayerControlled::TurnCamera(float direction)
 
 }
 
-void AMech_PlayerControlled::Shoot()
+void AMech_PlayerControlled::Shoot_Begin()
 {
 	// wait to implment
+	Super::Shoot_Begin();
+
+}
+void AMech_PlayerControlled::Shoot_End()
+{
+	// wait to implment
+	Super::Shoot_End();
+
 
 }
