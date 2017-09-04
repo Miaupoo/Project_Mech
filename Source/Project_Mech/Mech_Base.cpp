@@ -45,3 +45,13 @@ void AMech_Base::Shoot_End()
 
 
 }
+void AMech_Base::Dash_Begin()
+{
+	m_IsDashing = true;
+}
+
+void AMech_Base::Dash_End()
+{
+	m_IsDashing = false;
+
+}

@@ -27,10 +27,22 @@ public:
 
 	// rotate the character and camera
 	void TurnCamera(float direction);
-	virtual void Shoot_Begin();
 
-	virtual void Shoot_End();
+	void CameraUpdate();
+
+
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
+
+
+	virtual void Shoot_Begin()override;
+
+	virtual void Shoot_End()override;
 	
+	virtual void Dash_Begin()override;
+
+	virtual void Dash_End()override;
 
 private:
 	// the speed of rotating the character and camera
@@ -41,6 +53,18 @@ private:
 	UPROPERTY(EditAnywhere , BlueprintReadWrite , Category = "Movement" , meta = (AllowPrivateAccess = "true"))
 	float m_MoveSpeed;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+	float m_DashSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraTrick", meta = (AllowPrivateAccess = "true"))
+	FVector m_NormalCameraLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraTrick", meta = (AllowPrivateAccess = "true"))
+	FVector m_CurrentCameraLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraTrick", meta = (AllowPrivateAccess = "true"))
+	FVector m_DashCameraLocation;
+
 	// the camera of the camera
 	UPROPERTY(EditAnywhere , BlueprintReadWrite , Category = "Camera" , meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent * m_PlayerCamera;
@@ -50,7 +74,8 @@ private:
 	class USpringArmComponent* m_SpringArm;
     
 	// the class pointer to the camerashake component to make the camera shake.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraTrick", meta = (AllowPrivateAccess = "true"))
 	class TSubclassOf<UCameraShake>m_CameraShake;
+	
 	
 };

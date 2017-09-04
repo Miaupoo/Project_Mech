@@ -5,7 +5,7 @@
 #include "Components/InputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
-
+#include"Kismet/KismetMathLibrary.h"
 AMech_PlayerControlled::AMech_PlayerControlled()
 {
 	m_SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -13,6 +13,20 @@ AMech_PlayerControlled::AMech_PlayerControlled()
 	m_PlayerCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("PlayerCamera"));
 	m_PlayerCamera->SetupAttachment(m_SpringArm, USpringArmComponent::SocketName);
 }
+void AMech_PlayerControlled::BeginPlay()
+{
+	Super::BeginPlay();
+	m_NormalCameraLocation = m_PlayerCamera->RelativeLocation;
+	m_DashCameraLocation = FVector(97, 0, 67);
+	m_CurrentCameraLocation = m_NormalCameraLocation;
+}
+
+void AMech_PlayerControlled::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	CameraUpdate();
+}
+
 
 void AMech_PlayerControlled::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -22,14 +36,16 @@ void AMech_PlayerControlled::SetupPlayerInputComponent(class UInputComponent* Pl
 	PlayerInputComponent->BindAxis("TurnCamera", this, &AMech_PlayerControlled::TurnCamera);
 	PlayerInputComponent->BindAction("Shoot",IE_Pressed, this, &AMech_PlayerControlled::Shoot_Begin);
 	PlayerInputComponent->BindAction("Shoot", IE_Released, this, &AMech_PlayerControlled::Shoot_End);
-
+	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &AMech_PlayerControlled::Dash_Begin);
+	PlayerInputComponent->BindAction("Dash", IE_Released, this, &AMech_PlayerControlled::Dash_End);
 }
 
 void AMech_PlayerControlled::Move_Forward(float direction)
 {
 	if (direction)
 	{
-		AddMovementInput(GetActorForwardVector(), direction * m_MoveSpeed * GetWorld()->DeltaTimeSeconds);
+
+		AddMovementInput(GetActorForwardVector(), direction * m_MoveSpeed * GetWorld()->DeltaTimeSeconds * m_DashSpeed);
 		// make camera shake during the character movement 
 		UGameplayStatics::PlayWorldCameraShake(this, m_CameraShake, m_PlayerCamera->GetComponentLocation(), 0, 1000);
 	}
@@ -60,6 +76,7 @@ void AMech_PlayerControlled::Shoot_Begin()
 	// wait to implment
 	Super::Shoot_Begin();
 
+
 }
 void AMech_PlayerControlled::Shoot_End()
 {
@@ -67,4 +84,30 @@ void AMech_PlayerControlled::Shoot_End()
 	Super::Shoot_End();
 
 
+
+}
+void AMech_PlayerControlled::Dash_Begin()
+{
+	Super::Dash_Begin();
+	m_DashSpeed = 3;
+}
+
+void AMech_PlayerControlled::Dash_End()
+{
+	Super::Dash_End();
+	m_DashSpeed = 1;
+
+}
+
+void AMech_PlayerControlled::CameraUpdate()
+{
+	if (GetIsDashing() == true)
+	{
+		m_CurrentCameraLocation = UKismetMathLibrary::VInterpTo(m_CurrentCameraLocation, m_DashCameraLocation, GetWorld()->DeltaTimeSeconds, 2);
+	}
+	else
+	{
+		m_CurrentCameraLocation = UKismetMathLibrary::VInterpTo(m_CurrentCameraLocation, m_NormalCameraLocation, GetWorld()->DeltaTimeSeconds, 2);
+	}
+	m_PlayerCamera->SetRelativeLocation(m_CurrentCameraLocation);
 }

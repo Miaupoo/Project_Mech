@@ -27,7 +27,11 @@ public:
 
 	virtual void Shoot_End();
 
+	virtual void Dash_Begin();
 
+	virtual void Dash_End();
+
+	FORCEINLINE bool GetIsDashing() { return m_IsDashing; }
 private:
 
 	// the current hp of the mech
@@ -38,8 +42,11 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties", meta = (AllowPrivateAccess = "true"))
 	float m_MaxHp;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State", meta = (AllowPrivateAccess = "true"))
 	bool m_IsShooting;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State", meta = (AllowPrivateAccess = "true"))
+	bool m_IsDashing;
 	
 
 
