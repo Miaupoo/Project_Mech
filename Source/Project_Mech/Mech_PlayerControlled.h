@@ -28,6 +28,13 @@ public:
 	// rotate the character and camera
 	void TurnCamera(float direction);
 
+	void LookUpCamera(float direction);
+
+
+	UFUNCTION(reliable, server, WithValidation)
+	void ServerTurnCamera(float direction);
+
+
 	void CameraUpdate();
 
 
@@ -44,6 +51,9 @@ public:
 
 	virtual void Dash_End()override;
 
+	virtual void ToggleAimming();
+
+
 private:
 	// the speed of rotating the character and camera
 	UPROPERTY(EditAnywhere , BlueprintReadWrite , Category = "Movement" , meta = (AllowPrivateAccess = "true"))
@@ -54,10 +64,16 @@ private:
 	float m_MoveSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-	float m_DashSpeed;
+	float m_CurrentDashSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State", meta = (AllowPrivateAccess = "true"))
+	bool m_IsAimming;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraTrick", meta = (AllowPrivateAccess = "true"))
 	FVector m_NormalCameraLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraTrick", meta = (AllowPrivateAccess = "true"))
+	FVector m_AimmingCameraLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CameraTrick", meta = (AllowPrivateAccess = "true"))
 	FVector m_CurrentCameraLocation;

@@ -20,6 +20,8 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const;
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	// shoot them up !!!
@@ -27,11 +29,25 @@ public:
 
 	virtual void Shoot_End();
 
+	// Dash Function
+	// modify the dashing speed and change the movement state
 	virtual void Dash_Begin();
 
 	virtual void Dash_End();
 
+	// 
+	virtual void SetDashing(bool IsDashing);
+
+	// call on the server 
+	UFUNCTION(reliable, server, WithValidation)
+	virtual void ServerSetDashing(bool IsDashing);
+
 	FORCEINLINE bool GetIsDashing() { return m_IsDashing; }
+
+	FORCEINLINE float GetDashSpeed() { return m_DashSpeed; }
+
+
+
 private:
 
 	// the current hp of the mech
@@ -42,11 +58,17 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties", meta = (AllowPrivateAccess = "true"))
 	float m_MaxHp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties", meta = (AllowPrivateAccess = "true"))
+	float m_DashSpeed;
+
+	// player is shooting or not . 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State", meta = (AllowPrivateAccess = "true"))
 	bool m_IsShooting;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State", meta = (AllowPrivateAccess = "true"))
+	// player is dashing or not. use to determine player movement speed and animation
+	UPROPERTY(Replicated , EditAnywhere , BlueprintReadWrite , Category = "State" , meta = (AllowPrivateAccess = "true"))
 	bool m_IsDashing;
+
 	
 
 
