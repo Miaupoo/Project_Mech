@@ -27,7 +27,6 @@ void AMech_Base::Tick(float DeltaTime)
 void AMech_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	// Here we list the variables we want to replicate + a condition if wanted 
 	DOREPLIFETIME(AMech_Base, m_IsDashing);
 }
 
@@ -49,7 +48,7 @@ void AMech_Base::Shoot_End()
 {
 	// wait to implment
 	m_IsShooting = false;
-
+	
 
 }
 void AMech_Base::Dash_Begin()
