@@ -55,6 +55,8 @@ public:
 
 
 private:
+
+
 	// the speed of rotating the character and camera
 	UPROPERTY(EditAnywhere , BlueprintReadWrite , Category = "Movement" , meta = (AllowPrivateAccess = "true"))
 	float m_RotateSpeed;

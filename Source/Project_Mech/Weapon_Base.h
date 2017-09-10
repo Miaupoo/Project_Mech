@@ -5,56 +5,36 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Weapon_Base.generated.h"
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FWeaponData
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(BlueprintReadWrite, Category = "Ammo")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Ammo")
 	bool m_IsInfiniteAmmo;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Ammo")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 	bool m_IsInfiniteClip;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Ammo")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 	int m_MaxAmmo;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Ammo")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 	int m_AmmoPerClip;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Ammo")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 	int m_InitialClips;
-
-
-	/** time between two consecutive shots */
-	//UPROPERTY(EditDefaultsOnly, Category = WeaponStat)
-		//float TimeBetweenShots;
-
-	/** failsafe reload duration if weapon doesn't have any animation for it */
-	//UPROPERTY(EditDefaultsOnly, Category = WeaponStat)
-		//float NoAnimReloadDuration;
 	
-	/** defaults */
-	/*
 	FWeaponData()
 	{
-		bInfiniteAmmo = false;
-		bInfiniteClip = false;
-		MaxAmmo = 100;
-		AmmoPerClip = 20;
-		InitialClips = 4;
-		TimeBetweenShots = 0.2f;
-		NoAnimReloadDuration = 1.0f;
-	}*/
-};
-/*UENUM()
-enum EWeaponState
-{
-	Idle,
-	Shooting,
-	Reloading
-};*/
+		m_IsInfiniteAmmo = false;
+		m_IsInfiniteClip = false;
+		m_MaxAmmo = 100;
+		m_AmmoPerClip = 20;
+		m_InitialClips = m_MaxAmmo / m_AmmoPerClip - 1;
 
+	}
+};
 UENUM(BlueprintType)		
 enum class EWeaponState : uint8
 {
@@ -89,29 +69,57 @@ public:
 	UFUNCTION(reliable, server, WithValidation)
 	void ServeReload();
 
+	void AddAmmo();
 
+	void UseAmmo();
+
+	float PlayWeaponAnimation(UAnimMontage * WeaponAnimation);
+
+	void PlayWeaponSound(USoundBase * WeaponSound);
+
+	bool CanReload();
+
+	void SetWeaponState(EWeaponState NewState);
+
+	void HandleNewState(EWeaponState NewState);
+
+	void StopReload();
 private:
-	UPROPERTY(BlueprintReadWrite , EditAnywhere,Category = "Weapon" , meta = (AllowPrivateAccess = "true"))
-	FWeaponData m_Weapondate;
 
-	UPROPERTY(BlueprintReadWrite , EditAnywhere = "Weapon" , meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	FWeaponData m_WeaponData;
+
+	UPROPERTY(BlueprintReadWrite , EditAnywhere, Category = "Weapon" , meta = (AllowPrivateAccess = "true"))
 	EWeaponState m_WeaponState;
 
-	UPROPERTY(BlueprintReadWrite , EditAnywhere, Category = "Aniamtion" , meta = (AllowPrivateAccess = "true"))
+	EWeaponState m_PreWeaponState;
+
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Aniamtion", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage * m_ReloadAnimation;
 
-	UPROPERTY(BlueprintReadWrite , EditAnywhere, Category = "Aniamtion" , meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Aniamtion", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage * m_ShootAnimation;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Sound", meta = (AllowPrivateAccess = "true"))
 	USoundBase * m_ReloadSound;
 
-	UPROPERTY(Replicated , BlueprintReadWrite , EditAnywhere , Category = "Ammo" , meta = (AllowPrivateAccess = "true"))
+	FTimerHandle m_ReloadTimerHandle;
+
+
+
+	UPROPERTY(Replicated , BlueprintReadWrite, EditAnywhere, Category = "ammo", meta = (AllowPrivateAccess = "true"))
 	int m_CurrentAmmo;
 
-	UPROPERTY(Replicated , BlueprintReadWrite , EditAnywhere , Category = "Ammo" , meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "ammo", meta = (AllowPrivateAccess = "true"))
 	int m_CurrentClip;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ammo", meta = (AllowPrivateAccess = "true"))
+	int m_AmmosInClip;
+
+	int m_ShootCount;
+
 	class AMech_PlayerControlled * m_OwnerCharacter;
+
 	
 };

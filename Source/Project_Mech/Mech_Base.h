@@ -29,24 +29,32 @@ public:
 
 	virtual void Shoot_End();
 
+	virtual void Reload();
+
 	// Dash Function
 	// modify the dashing speed and change the movement state
+
+	void ToggleRun();
+
+
 	virtual void Dash_Begin();
 
 	virtual void Dash_End();
 
 	// 
-	virtual void SetDashing(bool IsDashing);
+	virtual void SetDashing(bool CanRun);
 
 	// call on the server 
 	UFUNCTION(reliable, server, WithValidation)
-	virtual void ServerSetDashing(bool IsDashing);
+	virtual void ServerSetDashing(bool CanRun);
 
-	FORCEINLINE bool GetIsDashing() { return m_IsDashing; }
+	bool GetIsWantToRun() { return m_IsDashing; }
+
+	FORCEINLINE bool GetIsDashing() { return m_IsWantToRun; }
 
 	FORCEINLINE float GetDashSpeed() { return m_DashSpeed; }
 
-
+	FORCEINLINE bool CheckIsMovingForward();
 
 private:
 
@@ -68,10 +76,15 @@ private:
 	// player is dashing or not. use to determine player movement speed and animation
 	UPROPERTY(Replicated , EditAnywhere , BlueprintReadWrite , Category = "State" , meta = (AllowPrivateAccess = "true"))
 	bool m_IsDashing;
-
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State", meta = (AllowPrivateAccess = "true"))
+	bool m_IsWantToRun;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	class AWeapon_Base * m_CurrentWeapon;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AWeapon_Base> m_WeaponClass;
 
 
 

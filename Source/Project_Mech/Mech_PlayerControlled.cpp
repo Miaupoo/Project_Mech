@@ -44,9 +44,11 @@ void AMech_PlayerControlled::SetupPlayerInputComponent(class UInputComponent* Pl
 	PlayerInputComponent->BindAction("Shoot",IE_Pressed, this, &AMech_PlayerControlled::Shoot_Begin);
 	PlayerInputComponent->BindAxis("LookUpCamera", this, &AMech_PlayerControlled::LookUpCamera);
 	PlayerInputComponent->BindAction("Shoot", IE_Released, this, &AMech_PlayerControlled::Shoot_End);
+	PlayerInputComponent->BindAction("Reload", IE_Pressed,  this, &AMech_Base::Reload);
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &AMech_PlayerControlled::Dash_Begin);
 	PlayerInputComponent->BindAction("Dash", IE_Released, this, &AMech_PlayerControlled::Dash_End);
 	PlayerInputComponent->BindAction("Aim", IE_Released, this, &AMech_PlayerControlled::ToggleAimming);
+
 
 }
 
@@ -57,6 +59,10 @@ void AMech_PlayerControlled::Move_Forward(float direction)
 		if (direction > 0)
 		{
 			AddMovementInput(GetActorForwardVector(), direction * m_MoveSpeed * GetWorld()->DeltaTimeSeconds * m_CurrentDashSpeed);
+			if (GetIsDashing())
+			{
+				SetDashing(true);
+			}
 		}
 		else
 		{
