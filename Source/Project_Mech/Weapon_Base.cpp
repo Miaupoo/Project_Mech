@@ -12,18 +12,22 @@ AWeapon_Base::AWeapon_Base()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	m_WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	m_WeaponData = FWeaponData();
 	m_CurrentAmmo = m_WeaponData.m_AmmoPerClip;
 	m_CurrentClip = m_WeaponData.m_InitialClips;
 	m_AmmosInClip = m_WeaponData.m_MaxAmmo - m_WeaponData.m_AmmoPerClip;
+	m_WeaponState = EWeaponState::Idle;
+	m_PreWeaponState = EWeaponState::Idle;
 	bReplicates = true;
-    
 }
 
 // Called when the game starts or when spawned
 void AWeapon_Base::BeginPlay()
 {
 	Super::BeginPlay();
+	//SetOwner(m_OwnerCharacter);
+
 	
 }
 
@@ -39,7 +43,7 @@ void AWeapon_Base::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutL
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AWeapon_Base, m_CurrentAmmo);
 	DOREPLIFETIME(AWeapon_Base, m_CurrentClip);
-
+	DOREPLIFETIME(AWeapon_Base, m_OwnerCharacter);
 }
 
 
@@ -50,23 +54,52 @@ void AWeapon_Base::Reload()
 		
 		if (Role < ROLE_Authority)
 		{
-			//UE_LOG(LogTemp, Warning, TEXT(FName();
+			//UE_LOG(LogTemp, Warning, TEXT("TryingServeReload"));
 
 			ServeReload();
 		}
-		UE_LOG(LogTemp, Warning, TEXT("localReload"));
+		//UE_LOG(LogTemp, Warning, TEXT("localReload"));
 
 		SetWeaponState(EWeaponState::Reloading);
 		//float AnimationDuration = PlayWeaponAnimation(m_ReloadAnimation);
 		//GetWorldTimerManager().SetTimer(m_ReloadTimerHandle , &AWeapon_Base::StopReload , AnimationDuration, false);
 		AddAmmo();
-		//if (m_OwnerCharacter && m_OwnerCharacter->IsLocallyControlled())
-		//{
-		//	PlayWeaponSound(m_ReloadSound);
-		//}
+		if (m_OwnerCharacter && m_OwnerCharacter->IsLocallyControlled())
+		{
+			PlayWeaponSound(m_ReloadSound);
+		}
 		SetWeaponState(EWeaponState::Idle);
 
 	}
+	/*switch (Role)
+	{
+	case ROLE_Authority:
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ROLE_Authority"));
+		break;
+	}
+
+	case ROLE_AutonomousProxy:
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ROLE_AutonomousProxy"));
+		break;
+	}
+
+	case ROLE_SimulatedProxy:
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ROLE_SimulatedProxy"));
+		break;
+	}
+
+	case ROLE_None:
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ROLE_None"));
+		break;
+	}
+	
+	break;
+	}
+	*/
 
 }
 
@@ -92,13 +125,13 @@ void AWeapon_Base::StopReload()
 void AWeapon_Base::AddAmmo()
 {
 
-		int DeltaAmmo = m_WeaponData.m_AmmoPerClip - m_CurrentAmmo;
+	int DeltaAmmo = m_WeaponData.m_AmmoPerClip - m_CurrentAmmo;
 		
-		m_CurrentAmmo = m_WeaponData.m_AmmoPerClip;
+	m_CurrentAmmo = m_WeaponData.m_AmmoPerClip;
 
-		m_AmmosInClip -= DeltaAmmo;
+	m_AmmosInClip -= DeltaAmmo;
 
-		m_CurrentClip = m_AmmosInClip / m_WeaponData.m_AmmoPerClip + 1;
+	m_CurrentClip = m_AmmosInClip / m_WeaponData.m_AmmoPerClip + 1;
 
 }
 void AWeapon_Base::UseAmmo()
@@ -171,4 +204,15 @@ void AWeapon_Base::HandleNewState(EWeaponState NewState)
 
 		break;
 	}
+}
+void AWeapon_Base::SetOwningPawn(AMech_Base * NewOwner)
+{
+	if (m_OwnerCharacter != NewOwner)
+	{
+		m_OwnerCharacter = NewOwner;
+		SetOwner(NewOwner);
+		Instigator = NewOwner;
+		AttachToActor(NewOwner, FAttachmentTransformRules::KeepRelativeTransform, "Weapon");
+	}
+
 }

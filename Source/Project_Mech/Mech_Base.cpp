@@ -17,11 +17,22 @@ AMech_Base::AMech_Base()
 void AMech_Base::BeginPlay()
 {
 	Super::BeginPlay();
-	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.Owner = this;
-	SpawnParameters.Instigator = this;
-	m_CurrentWeapon = GetWorld()->SpawnActor<AWeapon_Base>(m_WeaponClass);
-	//m_CurrentWeapon = Cast<AWeapon_Base>(m_WeaponClass->GetDefaultObject());
+	if (Role == ROLE_Authority)
+	{
+		//FActorSpawnParameters SpawnParameters;
+		//SpawnParameters.Owner = this;
+		//SpawnParameters.Instigator = this;
+		m_CurrentWeapon = GetWorld()->SpawnActor<AWeapon_Base>(m_WeaponClass);
+		//UE_LOG(LogTemp, Warning, TEXT("Spawned"));
+
+	}
+	if (m_CurrentWeapon)
+	{
+		EquipWeapon(m_CurrentWeapon);
+		
+	}
+
+
 }
 
 // Called every frame
@@ -48,7 +59,7 @@ void AMech_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AMech_Base, m_IsDashing);
-	
+	DOREPLIFETIME(AMech_Base, m_CurrentWeapon); 
 }
 
 // Called to bind functionality to input
@@ -109,4 +120,36 @@ void AMech_Base::Reload()
 bool AMech_Base::CheckIsMovingForward()
 {
 	return FVector::DotProduct(GetVelocity().GetSafeNormal(), GetActorForwardVector()) > 0.6;
+}
+
+
+
+
+
+void AMech_Base::EquipWeapon(AWeapon_Base * weapon)
+{
+	if (Role == ROLE_Authority)
+	{
+		//m_CurrentWeapon->SetOwner(this);
+		//UE_LOG(LogTemp, Warning, TEXT("ServeEquip"));
+		m_CurrentWeapon->SetOwningPawn(this);
+	}
+	else
+	{
+		ServerEquipWeapon(weapon);
+		//UE_LOG(LogTemp, Warning, TEXT("LocalEquip"));
+	}
+}
+bool AMech_Base::ServerEquipWeapon_Validate(AWeapon_Base * weapon)
+{
+	return true;
+}
+void AMech_Base::ServerEquipWeapon_Implementation(AWeapon_Base * weapon)
+{
+	EquipWeapon(weapon);
+}
+void AMech_Base::OnRep_CurrentWeapon(AWeapon_Base * weapon)
+{
+	EquipWeapon(weapon);
+	//UE_LOG(LogTemp, Warning, TEXT("aaaaa"));
 }

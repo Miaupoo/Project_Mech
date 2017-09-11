@@ -64,27 +64,43 @@ public:
    virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const;
 
 
+    //  reload function local + server
 	void Reload();
-
+   
+    //  reload function on server
 	UFUNCTION(reliable, server, WithValidation)
 	void ServeReload();
 
+	//  
 	void AddAmmo();
 
 	void UseAmmo();
 
+
 	float PlayWeaponAnimation(UAnimMontage * WeaponAnimation);
+
 
 	void PlayWeaponSound(USoundBase * WeaponSound);
 
+
 	bool CanReload();
+
 
 	void SetWeaponState(EWeaponState NewState);
 
+
 	void HandleNewState(EWeaponState NewState);
 
+
 	void StopReload();
+
+
+	void SetOwningPawn(class AMech_Base * NewOwner);
+
 private:
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
+	USkeletalMeshComponent * m_WeaponMesh;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	FWeaponData m_WeaponData;
@@ -118,8 +134,8 @@ private:
 	int m_AmmosInClip;
 
 	int m_ShootCount;
-
-	class AMech_PlayerControlled * m_OwnerCharacter;
+	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Owner", meta = (AllowPrivateAccess = "true"))
+	class AMech_Base * m_OwnerCharacter;
 
 	
 };

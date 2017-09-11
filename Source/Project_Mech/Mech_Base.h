@@ -31,10 +31,15 @@ public:
 
 	virtual void Reload();
 
+	void EquipWeapon(AWeapon_Base * weapon);
+
+	UFUNCTION(reliable, server, WithValidation)
+	void ServerEquipWeapon(AWeapon_Base * weapon);
+
+
 	// Dash Function
 	// modify the dashing speed and change the movement state
 
-	void ToggleRun();
 
 
 	virtual void Dash_Begin();
@@ -55,6 +60,10 @@ public:
 	FORCEINLINE float GetDashSpeed() { return m_DashSpeed; }
 
 	FORCEINLINE bool CheckIsMovingForward();
+
+	UFUNCTION()
+	void OnRep_CurrentWeapon(AWeapon_Base * weapon);
+
 
 private:
 
@@ -80,7 +89,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State", meta = (AllowPrivateAccess = "true"))
 	bool m_IsWantToRun;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentWeapon, EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	class AWeapon_Base * m_CurrentWeapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
