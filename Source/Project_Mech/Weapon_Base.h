@@ -24,6 +24,9 @@ struct FWeaponData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 	int m_InitialClips;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+	int m_AmmoPerShoot;
 	
 	FWeaponData()
 	{
@@ -32,7 +35,7 @@ struct FWeaponData
 		m_MaxAmmo = 100;
 		m_AmmoPerClip = 20;
 		m_InitialClips = m_MaxAmmo / m_AmmoPerClip - 1;
-
+		m_AmmoPerShoot = 1;
 	}
 };
 UENUM(BlueprintType)		
@@ -95,7 +98,26 @@ public:
 	void StopReload();
 
 
+	bool CanFire();
+
 	void SetOwningPawn(class AMech_Base * NewOwner);
+
+	void StartFire();
+
+	void StopFire();
+
+	void HandleFire();
+
+	virtual void FireWeapon()PURE_VIRTUAL(AShooterWeapon::FireWeapon, );
+
+	UFUNCTION(reliable,server, WithValidation)
+	void ServeHandleFire();
+
+	FVector GetMuzzleLocation();
+
+	FVector GetMuzzleDirection();
+
+
 
 private:
 
@@ -120,8 +142,12 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Sound", meta = (AllowPrivateAccess = "true"))
 	USoundBase * m_ReloadSound;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Sound", meta = (AllowPrivateAccess = "true"))
+	USoundBase * m_ShootSound;
+
 	FTimerHandle m_ReloadTimerHandle;
 
+	FName m_WeaponMuzzleName;
 
 
 	UPROPERTY(Replicated , BlueprintReadWrite, EditAnywhere, Category = "ammo", meta = (AllowPrivateAccess = "true"))
@@ -132,6 +158,8 @@ private:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ammo", meta = (AllowPrivateAccess = "true"))
 	int m_AmmosInClip;
+
+
 
 	int m_ShootCount;
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Owner", meta = (AllowPrivateAccess = "true"))

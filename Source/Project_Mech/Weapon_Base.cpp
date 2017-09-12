@@ -4,6 +4,7 @@
 #include "Mech_PlayerControlled.h"
 #include "UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "TimerManager.h"
 #include "Animation/AnimMontage.h"
 
@@ -28,7 +29,6 @@ void AWeapon_Base::BeginPlay()
 	Super::BeginPlay();
 	//SetOwner(m_OwnerCharacter);
 
-	
 }
 
 // Called every frame
@@ -54,14 +54,14 @@ void AWeapon_Base::Reload()
 		
 		if (Role < ROLE_Authority)
 		{
-			//UE_LOG(LogTemp, Warning, TEXT("TryingServeReload"));
+			UE_LOG(LogTemp, Warning, TEXT("ServeReloading"),m_CurrentAmmo);
 
 			ServeReload();
 		}
 		//UE_LOG(LogTemp, Warning, TEXT("localReload"));
 
 		SetWeaponState(EWeaponState::Reloading);
-		//float AnimationDuration = PlayWeaponAnimation(m_ReloadAnimation);
+		float AnimationDuration = PlayWeaponAnimation(m_ReloadAnimation);
 		//GetWorldTimerManager().SetTimer(m_ReloadTimerHandle , &AWeapon_Base::StopReload , AnimationDuration, false);
 		AddAmmo();
 		if (m_OwnerCharacter && m_OwnerCharacter->IsLocallyControlled())
@@ -71,35 +71,6 @@ void AWeapon_Base::Reload()
 		SetWeaponState(EWeaponState::Idle);
 
 	}
-	/*switch (Role)
-	{
-	case ROLE_Authority:
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ROLE_Authority"));
-		break;
-	}
-
-	case ROLE_AutonomousProxy:
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ROLE_AutonomousProxy"));
-		break;
-	}
-
-	case ROLE_SimulatedProxy:
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ROLE_SimulatedProxy"));
-		break;
-	}
-
-	case ROLE_None:
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ROLE_None"));
-		break;
-	}
-	
-	break;
-	}
-	*/
 
 }
 
@@ -142,7 +113,7 @@ void AWeapon_Base::UseAmmo()
 	}
 	else
 	{
-		m_CurrentAmmo -= 1;
+		m_CurrentAmmo -= m_WeaponData.m_AmmoPerShoot;
 	}
 
 }
@@ -159,7 +130,7 @@ void AWeapon_Base::PlayWeaponSound(USoundBase * WeaponSound)
 
 bool AWeapon_Base::CanReload()
 {
-	if (m_CurrentClip == 0 || m_CurrentAmmo == m_WeaponData.m_AmmoPerClip || m_WeaponState != EWeaponState::Idle)
+	if (m_CurrentClip == 0 || m_CurrentAmmo == m_WeaponData.m_AmmoPerClip || m_WeaponState == EWeaponState::Reloading)
 	{
 		return false;
 	}
@@ -215,4 +186,64 @@ void AWeapon_Base::SetOwningPawn(AMech_Base * NewOwner)
 		AttachToActor(NewOwner, FAttachmentTransformRules::KeepRelativeTransform, "Weapon");
 	}
 
+}
+FVector AWeapon_Base::GetMuzzleLocation()
+{
+	return m_WeaponMesh->GetSocketLocation(m_WeaponMuzzleName);
+}
+
+FVector AWeapon_Base::GetMuzzleDirection()
+{
+	return m_WeaponMesh->GetForwardVector();
+}
+
+void AWeapon_Base::StartFire()
+{
+	if (CanFire())
+	{
+		SetWeaponState(EWeaponState::Shooting);
+		//PlayWeaponAnimation(m_ShootAnimation);
+
+		if (m_OwnerCharacter->IsLocallyControlled())
+		{
+			//PlayWeaponSound(m_ShootSound);
+		}
+		HandleFire();
+	}
+}
+
+void AWeapon_Base::StopFire()
+{
+	SetWeaponState(EWeaponState::Idle);
+}
+
+void AWeapon_Base::HandleFire()
+{
+	if (Role < ROLE_Authority)
+	{
+		ServeHandleFire();
+	    UE_LOG(LogTemp, Warning, TEXT("ServeFire") , m_CurrentAmmo);
+
+	}
+	UseAmmo();
+	//FireWeapon();
+}
+
+bool AWeapon_Base::ServeHandleFire_Validate()
+{
+	return true;
+}
+void AWeapon_Base::ServeHandleFire_Implementation()
+{
+	HandleFire();
+}
+
+
+bool AWeapon_Base::CanFire()
+{
+	if (m_WeaponState == EWeaponState::Reloading || m_CurrentAmmo == 0)
+	{
+		return false;
+	}
+	return true;
 }
