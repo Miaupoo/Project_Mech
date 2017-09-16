@@ -71,15 +71,16 @@ void AMech_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 }
 void AMech_Base::Shoot_Begin()
 {
-	// wait to implment
+	// wait to implmentsda
 	m_IsShooting = true;
+	m_CurrentWeapon->StartFire();
 
 
 }
 void AMech_Base::Shoot_End()
 {
 	m_IsShooting = false;
-
+	m_CurrentWeapon->StopFire();
 }
 void AMech_Base::Dash_Begin()
 {

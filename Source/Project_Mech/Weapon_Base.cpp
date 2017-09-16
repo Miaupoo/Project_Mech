@@ -4,10 +4,10 @@
 #include "Mech_PlayerControlled.h"
 #include "UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "TimerManager.h"
 #include "Animation/AnimMontage.h"
 
-// Sets default values
 AWeapon_Base::AWeapon_Base()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -22,20 +22,28 @@ AWeapon_Base::AWeapon_Base()
 	bReplicates = true;
 }
 
-// Called when the game starts or when spawned
 void AWeapon_Base::BeginPlay()
 {
 	Super::BeginPlay();
 	//SetOwner(m_OwnerCharacter);
 
-	
 }
 
-// Called every frame
 void AWeapon_Base::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	/*
+	if (m_CurrentFireColdDown > 0)
+	{
+		m_CurrentFireColdDown -= DeltaTime;
+	}
 
+	if (m_IsShooting && CanFire())
+	{
+		HandleFire();
+	}*/
+
+	
 }
 
 void AWeapon_Base::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps)const
@@ -44,8 +52,9 @@ void AWeapon_Base::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutL
 	DOREPLIFETIME(AWeapon_Base, m_CurrentAmmo);
 	DOREPLIFETIME(AWeapon_Base, m_CurrentClip);
 	DOREPLIFETIME(AWeapon_Base, m_OwnerCharacter);
-}
 
+	
+}
 
 void AWeapon_Base::Reload()
 {
@@ -54,15 +63,16 @@ void AWeapon_Base::Reload()
 		
 		if (Role < ROLE_Authority)
 		{
-			//UE_LOG(LogTemp, Warning, TEXT("TryingServeReload"));
+			UE_LOG(LogTemp, Warning, TEXT("ServeReloading"),m_CurrentAmmo);
 
 			ServeReload();
 		}
 		//UE_LOG(LogTemp, Warning, TEXT("localReload"));
-
+		StopFire();
 		SetWeaponState(EWeaponState::Reloading);
-		//float AnimationDuration = PlayWeaponAnimation(m_ReloadAnimation);
+		float AnimationDuration = PlayWeaponAnimation(m_ReloadAnimation);
 		//GetWorldTimerManager().SetTimer(m_ReloadTimerHandle , &AWeapon_Base::StopReload , AnimationDuration, false);
+		//GetWorldTimerManager().SetTimer(m_ReloadTimerHandle, &AWeapon_Base::AddAmmo, AnimationDuration, false);
 		AddAmmo();
 		if (m_OwnerCharacter && m_OwnerCharacter->IsLocallyControlled())
 		{
@@ -71,38 +81,8 @@ void AWeapon_Base::Reload()
 		SetWeaponState(EWeaponState::Idle);
 
 	}
-	/*switch (Role)
-	{
-	case ROLE_Authority:
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ROLE_Authority"));
-		break;
-	}
-
-	case ROLE_AutonomousProxy:
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ROLE_AutonomousProxy"));
-		break;
-	}
-
-	case ROLE_SimulatedProxy:
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ROLE_SimulatedProxy"));
-		break;
-	}
-
-	case ROLE_None:
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ROLE_None"));
-		break;
-	}
-	
-	break;
-	}
-	*/
 
 }
-
 
 bool AWeapon_Base::ServeReload_Validate()
 {
@@ -121,7 +101,6 @@ void AWeapon_Base::StopReload()
 
 }
 
-
 void AWeapon_Base::AddAmmo()
 {
 
@@ -134,6 +113,7 @@ void AWeapon_Base::AddAmmo()
 	m_CurrentClip = m_AmmosInClip / m_WeaponData.m_AmmoPerClip + 1;
 
 }
+
 void AWeapon_Base::UseAmmo()
 {
 	if (m_WeaponData.m_IsInfiniteAmmo || m_WeaponData.m_IsInfiniteClip)
@@ -142,32 +122,11 @@ void AWeapon_Base::UseAmmo()
 	}
 	else
 	{
-		m_CurrentAmmo -= 1;
+		m_CurrentAmmo -= m_WeaponData.m_AmmoPerShoot;
 	}
 
 }
-float AWeapon_Base::PlayWeaponAnimation(UAnimMontage * WeaponAnimation)
-{
-	float Duration = m_OwnerCharacter->PlayAnimMontage(WeaponAnimation);
-	return Duration;
-}
 
-void AWeapon_Base::PlayWeaponSound(USoundBase * WeaponSound)
-{
-	UGameplayStatics::PlaySoundAtLocation(this, WeaponSound, GetActorLocation());
-}
-
-bool AWeapon_Base::CanReload()
-{
-	if (m_CurrentClip == 0 || m_CurrentAmmo == m_WeaponData.m_AmmoPerClip || m_WeaponState != EWeaponState::Idle)
-	{
-		return false;
-	}
-	else
-	{
-		return true;
-	}
-}
 void AWeapon_Base::SetWeaponState(EWeaponState NewState)
 {
 	m_WeaponState = NewState;
@@ -180,15 +139,12 @@ void AWeapon_Base::HandleNewState(EWeaponState NewState)
 	{
 	case EWeaponState::Idle:
 	{
-		m_ShootCount = 0;
+		m_CurrentSpreadDegree = 0;
 		break;
 	}
 	case EWeaponState::Shooting:
 	{
-		if (m_PreWeaponState == EWeaponState::Shooting)
-		{
-			m_ShootCount++;
-		}
+		
 		break;
 
 	}
@@ -205,6 +161,7 @@ void AWeapon_Base::HandleNewState(EWeaponState NewState)
 		break;
 	}
 }
+
 void AWeapon_Base::SetOwningPawn(AMech_Base * NewOwner)
 {
 	if (m_OwnerCharacter != NewOwner)
@@ -215,4 +172,105 @@ void AWeapon_Base::SetOwningPawn(AMech_Base * NewOwner)
 		AttachToActor(NewOwner, FAttachmentTransformRules::KeepRelativeTransform, "Weapon");
 	}
 
+}
+
+FVector AWeapon_Base::GetMuzzleLocation()
+{
+	return m_WeaponMesh->GetSocketLocation(m_WeaponMuzzleName);
+}
+
+FVector AWeapon_Base::GetMuzzleDirection()
+{
+	return m_WeaponMesh->GetForwardVector();
+}
+
+void AWeapon_Base::StartFire()
+{
+	if (CanFire())
+	{
+		SetWeaponState(EWeaponState::Shooting);
+		//PlayWeaponAnimation(m_ShootAnimation);
+
+		HandleFire();
+	}
+}
+
+void AWeapon_Base::StopFire()
+{
+	if (Role < ROLE_Authority)
+	{
+		ServeStopFire();
+	}
+	m_CurrentSpreadDegree = 0;
+	SetWeaponState(EWeaponState::Idle);
+	GetWorldTimerManager().ClearTimer(m_FiringTimerHandle);
+}
+
+bool AWeapon_Base::ServeStopFire_Validate()
+{
+	return true;
+}
+
+void AWeapon_Base::ServeStopFire_Implementation()
+{
+	StopFire();
+}
+
+void AWeapon_Base::HandleFire()
+{
+	if (Role < ROLE_Authority)
+	{
+		ServeHandleFire();
+	    UE_LOG(LogTemp, Warning, TEXT("ServeFire") , m_CurrentAmmo);
+
+	}
+	if (m_OwnerCharacter->IsLocallyControlled())
+	{
+		PlayWeaponSound(m_ShootSound);
+	}
+		UseAmmo();
+		FireWeapon();
+		GetWorldTimerManager().SetTimer(m_FiringTimerHandle, this, &AWeapon_Base::HandleFire, 1, true, m_WeaponData.m_FireRate);
+}
+
+bool AWeapon_Base::ServeHandleFire_Validate()
+{
+	return true;
+}
+
+void AWeapon_Base::ServeHandleFire_Implementation()
+{
+	HandleFire();
+}
+
+bool AWeapon_Base::CanReload()
+{
+	if (m_CurrentClip == 0 || m_CurrentAmmo == m_WeaponData.m_AmmoPerClip || m_WeaponState == EWeaponState::Reloading)
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+bool AWeapon_Base::CanFire()
+{
+	if (m_WeaponState == EWeaponState::Reloading || m_CurrentAmmo == 0)
+	{
+		return false;
+	}
+	return true;
+}
+
+float AWeapon_Base::PlayWeaponAnimation(UAnimMontage * WeaponAnimation)
+{
+	float Duration = m_OwnerCharacter->PlayAnimMontage(WeaponAnimation);
+	return Duration;
+}
+
+void AWeapon_Base::PlayWeaponSound(USoundBase * WeaponSound)
+{
+	UGameplayStatics::PlaySoundAtLocation(this, WeaponSound, GetActorLocation());
 }

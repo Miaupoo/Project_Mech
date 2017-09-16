@@ -24,6 +24,12 @@ struct FWeaponData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 	int m_InitialClips;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+	int m_AmmoPerShoot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData")
+	float m_FireRate;
 	
 	FWeaponData()
 	{
@@ -32,7 +38,8 @@ struct FWeaponData
 		m_MaxAmmo = 100;
 		m_AmmoPerClip = 20;
 		m_InitialClips = m_MaxAmmo / m_AmmoPerClip - 1;
-
+		m_AmmoPerShoot = 1;
+		m_FireRate = 0.3;
 	}
 };
 UENUM(BlueprintType)		
@@ -95,7 +102,32 @@ public:
 	void StopReload();
 
 
+	UFUNCTION(reliable, server, WithValidation)
+	void ServeStopFire();
+
+	bool CanFire();
+
 	void SetOwningPawn(class AMech_Base * NewOwner);
+
+	void StartFire();
+
+	void StopFire();
+
+	void HandleFire();
+
+	virtual void FireWeapon()PURE_VIRTUAL(AWeapon_Base::FireWeapon, );
+
+	UFUNCTION(reliable,server, WithValidation)
+	void ServeHandleFire();
+
+	FVector GetMuzzleLocation();
+
+	FVector GetMuzzleDirection();
+
+	void SetCurrentSpreadDegree(float DeltaDegree) { m_CurrentSpreadDegree += DeltaDegree; };
+
+	float GetCurrentSpreadDegree() { return m_CurrentSpreadDegree; }
+
 
 private:
 
@@ -120,9 +152,8 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Sound", meta = (AllowPrivateAccess = "true"))
 	USoundBase * m_ReloadSound;
 
-	FTimerHandle m_ReloadTimerHandle;
-
-
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Sound", meta = (AllowPrivateAccess = "true"))
+	USoundBase * m_ShootSound;
 
 	UPROPERTY(Replicated , BlueprintReadWrite, EditAnywhere, Category = "ammo", meta = (AllowPrivateAccess = "true"))
 	int m_CurrentAmmo;
@@ -133,9 +164,16 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ammo", meta = (AllowPrivateAccess = "true"))
 	int m_AmmosInClip;
 
-	int m_ShootCount;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ammo", meta = (AllowPrivateAccess = "true"))
+	float m_CurrentSpreadDegree;
+
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Owner", meta = (AllowPrivateAccess = "true"))
 	class AMech_Base * m_OwnerCharacter;
 
-	
+	FTimerHandle m_ReloadTimerHandle;
+
+	FTimerHandle m_FiringTimerHandle;
+
+	FName m_WeaponMuzzleName;
+
 };
