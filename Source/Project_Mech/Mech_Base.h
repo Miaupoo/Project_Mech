@@ -17,7 +17,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const;
@@ -34,7 +34,7 @@ public:
 	void EquipWeapon(AWeapon_Base * weapon);
 
 	UFUNCTION(reliable, server, WithValidation)
-	void ServerEquipWeapon(AWeapon_Base * weapon);
+		void ServerEquipWeapon(AWeapon_Base * weapon);
 
 
 	// Dash Function
@@ -51,7 +51,7 @@ public:
 
 	// call on the server 
 	UFUNCTION(reliable, server, WithValidation)
-	virtual void ServerSetDashing(bool CanRun);
+		virtual void ServerSetDashing(bool CanRun);
 
 	bool GetIsWantToRun() { return m_IsDashing; }
 
@@ -62,41 +62,41 @@ public:
 	FORCEINLINE bool CheckIsMovingForward();
 
 	UFUNCTION()
-	void OnRep_CurrentWeapon(AWeapon_Base * weapon);
+		void OnRep_CurrentWeapon(AWeapon_Base * weapon);
 
 
 private:
 
 	// the current hp of the mech
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties", meta = (AllowPrivateAccess = "true"))
-	float m_CurrentHp;
+		float m_CurrentHp;
 
 	// the max hp of the mech
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties", meta = (AllowPrivateAccess = "true"))
-	float m_MaxHp;
+		float m_MaxHp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties", meta = (AllowPrivateAccess = "true"))
-	float m_DashSpeed;
+		float m_DashSpeed;
 
 	// player is shooting or not . 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State", meta = (AllowPrivateAccess = "true"))
-	bool m_IsShooting;
+		bool m_IsShooting;
 
 	// player is dashing or not. use to determine player movement speed and animation
-	UPROPERTY(Replicated , EditAnywhere , BlueprintReadWrite , Category = "State" , meta = (AllowPrivateAccess = "true"))
-	bool m_IsDashing;
-	
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "State", meta = (AllowPrivateAccess = "true"))
+		bool m_IsDashing;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State", meta = (AllowPrivateAccess = "true"))
-	bool m_IsWantToRun;
+		bool m_IsWantToRun;
 
 	UPROPERTY(ReplicatedUsing = OnRep_CurrentWeapon, EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
-	class AWeapon_Base * m_CurrentWeapon;
+		class AWeapon_Base * m_CurrentWeapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AWeapon_Base> m_WeaponClass;
+		TSubclassOf<AWeapon_Base> m_WeaponClass;
 
 
 
-	
-	
+
+
 };
