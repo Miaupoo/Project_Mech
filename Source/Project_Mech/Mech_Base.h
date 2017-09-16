@@ -40,6 +40,8 @@ public:
 	// Dash Function
 	// modify the dashing speed and change the movement state
 
+	UFUNCTION()
+	void GotShoot(AActor* DamagedActor, float Damage, class AController* InstigatedBy,  FVector HitLocation, class UPrimitiveComponent* FHitComponent, FName BoneName,  FVector ShotFromDirection, const class UDamageType* DamageType, AActor*  DamageCauser);
 
 
 	virtual void Dash_Begin();
@@ -64,11 +66,12 @@ public:
 	UFUNCTION()
 	void OnRep_CurrentWeapon(AWeapon_Base * weapon);
 
-
+	void ModifyHp(float DeltaHp);
+	
 private:
 
 	// the current hp of the mech
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Properties", meta = (AllowPrivateAccess = "true"))
 	float m_CurrentHp;
 
 	// the max hp of the mech

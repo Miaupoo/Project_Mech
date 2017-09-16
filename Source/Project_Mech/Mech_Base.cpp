@@ -11,6 +11,7 @@ AMech_Base::AMech_Base()
 	PrimaryActorTick.bCanEverTick = true;
 	m_DashSpeed = 1.5;
 	m_CurrentWeapon = CreateDefaultSubobject<AWeapon_Base>(TEXT("Weapon"));
+	OnTakePointDamage.AddDynamic(this, &AMech_Base::GotShoot);
 }
 
 // Called when the game starts or when spawned
@@ -60,6 +61,8 @@ void AMech_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AMech_Base, m_IsDashing);
 	DOREPLIFETIME(AMech_Base, m_CurrentWeapon); 
+	DOREPLIFETIME(AMech_Base, m_CurrentHp);
+
 }
 
 // Called to bind functionality to input
@@ -73,7 +76,7 @@ void AMech_Base::Shoot_Begin()
 {
 	// wait to implmentsda
 	m_IsShooting = true;
-	m_CurrentWeapon->StartFire();
+		m_CurrentWeapon->StartFire();
 
 
 }
@@ -153,4 +156,27 @@ void AMech_Base::OnRep_CurrentWeapon(AWeapon_Base * weapon)
 {
 	EquipWeapon(weapon);
 	//UE_LOG(LogTemp, Warning, TEXT("aaaaa"));
+}
+void AMech_Base::ModifyHp(float DeltaHp) 
+{
+	UE_LOG(LogTemp, Warning, TEXT("ModifyHp"));
+
+	if (Role == ROLE_Authority)
+	{
+		m_CurrentHp -= DeltaHp;
+
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("not on the serve"));
+
+	}
+}
+
+
+void AMech_Base::GotShoot(AActor* DamagedActor, float Damage, class AController* InstigatedBy, FVector HitLocation, class UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection, const class UDamageType* DamageType, AActor*  DamageCauser)
+{
+	
+	UE_LOG(LogTemp, Warning, TEXT("motherfucker"));
+	ModifyHp(Damage);
 }

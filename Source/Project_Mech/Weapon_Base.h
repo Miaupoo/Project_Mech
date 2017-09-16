@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -10,30 +8,27 @@ struct FWeaponData
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Ammo")
-	bool m_IsInfiniteAmmo;
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+		bool m_IsInfiniteAmmo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-	bool m_IsInfiniteClip;
+		bool m_IsInfiniteClip;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-	int m_MaxAmmo;
+		int m_MaxAmmo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-	int m_AmmoPerClip;
+		int m_AmmoPerClip;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-	int m_InitialClips;
+		int m_InitialClips;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-	int m_AmmoPerShoot;
-<<<<<<< HEAD
+		int m_AmmoPerShoot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData")
-	float m_FireRate;
-=======
->>>>>>> origin/master
-	
+		float m_FireRate;
+
 	FWeaponData()
 	{
 		m_IsInfiniteAmmo = false;
@@ -42,13 +37,10 @@ struct FWeaponData
 		m_AmmoPerClip = 20;
 		m_InitialClips = m_MaxAmmo / m_AmmoPerClip - 1;
 		m_AmmoPerShoot = 1;
-<<<<<<< HEAD
 		m_FireRate = 0.3;
-=======
->>>>>>> origin/master
 	}
 };
-UENUM(BlueprintType)		
+UENUM(BlueprintType)
 enum class EWeaponState : uint8
 {
 	Idle,
@@ -60,8 +52,8 @@ UCLASS()
 class PROJECT_MECH_API AWeapon_Base : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AWeapon_Base();
 
@@ -69,20 +61,20 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	
-   virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const;
+
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const;
 
 
-    //  reload function local + server
+	//  reload function local + server
 	void Reload();
-   
-    //  reload function on server
+
+	//  reload function on server
 	UFUNCTION(reliable, server, WithValidation)
-	void ServeReload();
+		void ServeReload();
 
 	//  
 	void AddAmmo();
@@ -108,12 +100,9 @@ public:
 	void StopReload();
 
 
-<<<<<<< HEAD
 	UFUNCTION(reliable, server, WithValidation)
-	void ServeStopFire();
+		void ServeStopFire();
 
-=======
->>>>>>> origin/master
 	bool CanFire();
 
 	void SetOwningPawn(class AMech_Base * NewOwner);
@@ -124,81 +113,63 @@ public:
 
 	void HandleFire();
 
-<<<<<<< HEAD
 	virtual void FireWeapon()PURE_VIRTUAL(AWeapon_Base::FireWeapon, );
-=======
-	virtual void FireWeapon()PURE_VIRTUAL(AShooterWeapon::FireWeapon, );
->>>>>>> origin/master
 
-	UFUNCTION(reliable,server, WithValidation)
-	void ServeHandleFire();
+	UFUNCTION(reliable, server, WithValidation)
+		void ServeHandleFire();
 
 	FVector GetMuzzleLocation();
 
 	FVector GetMuzzleDirection();
 
-<<<<<<< HEAD
 	void SetCurrentSpreadDegree(float DeltaDegree) { m_CurrentSpreadDegree += DeltaDegree; };
 
 	float GetCurrentSpreadDegree() { return m_CurrentSpreadDegree; }
-=======
->>>>>>> origin/master
+
+	AMech_Base * GetPawn() { return m_OwnerCharacter; }
+
 
 
 private:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
-	USkeletalMeshComponent * m_WeaponMesh;
+		USkeletalMeshComponent * m_WeaponMesh;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
-	FWeaponData m_WeaponData;
+		FWeaponData m_WeaponData;
 
-	UPROPERTY(BlueprintReadWrite , EditAnywhere, Category = "Weapon" , meta = (AllowPrivateAccess = "true"))
-	EWeaponState m_WeaponState;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+		EWeaponState m_WeaponState;
 
 	EWeaponState m_PreWeaponState;
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Aniamtion", meta = (AllowPrivateAccess = "true"))
-	UAnimMontage * m_ReloadAnimation;
+		UAnimMontage * m_ReloadAnimation;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Aniamtion", meta = (AllowPrivateAccess = "true"))
-	UAnimMontage * m_ShootAnimation;
+		UAnimMontage * m_ShootAnimation;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Sound", meta = (AllowPrivateAccess = "true"))
-	USoundBase * m_ReloadSound;
+		USoundBase * m_ReloadSound;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Sound", meta = (AllowPrivateAccess = "true"))
-	USoundBase * m_ShootSound;
-<<<<<<< HEAD
-=======
-
-	FTimerHandle m_ReloadTimerHandle;
-
-	FName m_WeaponMuzzleName;
-
->>>>>>> origin/master
-
-	UPROPERTY(Replicated , BlueprintReadWrite, EditAnywhere, Category = "ammo", meta = (AllowPrivateAccess = "true"))
-	int m_CurrentAmmo;
+		USoundBase * m_ShootSound;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "ammo", meta = (AllowPrivateAccess = "true"))
-	int m_CurrentClip;
+		int m_CurrentAmmo;
+
+	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "ammo", meta = (AllowPrivateAccess = "true"))
+		int m_CurrentClip;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ammo", meta = (AllowPrivateAccess = "true"))
-	int m_AmmosInClip;
+		int m_AmmosInClip;
 
-<<<<<<< HEAD
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ammo", meta = (AllowPrivateAccess = "true"))
-	float m_CurrentSpreadDegree;
+		float m_CurrentSpreadDegree;
 
-=======
-
-
-	int m_ShootCount;
->>>>>>> origin/master
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Owner", meta = (AllowPrivateAccess = "true"))
-	class AMech_Base * m_OwnerCharacter;
+		class AMech_Base * m_OwnerCharacter;
 
 	FTimerHandle m_ReloadTimerHandle;
 
