@@ -127,6 +127,20 @@ void AWeapon_Base::UseAmmo()
 
 }
 
+<<<<<<< HEAD
+=======
+bool AWeapon_Base::CanReload()
+{
+	if (m_CurrentClip == 0 || m_CurrentAmmo == m_WeaponData.m_AmmoPerClip || m_WeaponState == EWeaponState::Reloading)
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+>>>>>>> origin/master
 void AWeapon_Base::SetWeaponState(EWeaponState NewState)
 {
 	m_WeaponState = NewState;
@@ -173,7 +187,10 @@ void AWeapon_Base::SetOwningPawn(AMech_Base * NewOwner)
 	}
 
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
 FVector AWeapon_Base::GetMuzzleLocation()
 {
 	return m_WeaponMesh->GetSocketLocation(m_WeaponMuzzleName);
@@ -191,12 +208,20 @@ void AWeapon_Base::StartFire()
 		SetWeaponState(EWeaponState::Shooting);
 		//PlayWeaponAnimation(m_ShootAnimation);
 
+<<<<<<< HEAD
+=======
+		if (m_OwnerCharacter->IsLocallyControlled())
+		{
+			//PlayWeaponSound(m_ShootSound);
+		}
+>>>>>>> origin/master
 		HandleFire();
 	}
 }
 
 void AWeapon_Base::StopFire()
 {
+<<<<<<< HEAD
 	if (Role < ROLE_Authority)
 	{
 		ServeStopFire();
@@ -214,6 +239,9 @@ bool AWeapon_Base::ServeStopFire_Validate()
 void AWeapon_Base::ServeStopFire_Implementation()
 {
 	StopFire();
+=======
+	SetWeaponState(EWeaponState::Idle);
+>>>>>>> origin/master
 }
 
 void AWeapon_Base::HandleFire()
@@ -224,6 +252,7 @@ void AWeapon_Base::HandleFire()
 	    UE_LOG(LogTemp, Warning, TEXT("ServeFire") , m_CurrentAmmo);
 
 	}
+<<<<<<< HEAD
 	if (m_OwnerCharacter->IsLocallyControlled())
 	{
 		PlayWeaponSound(m_ShootSound);
@@ -231,18 +260,26 @@ void AWeapon_Base::HandleFire()
 		UseAmmo();
 		FireWeapon();
 		GetWorldTimerManager().SetTimer(m_FiringTimerHandle, this, &AWeapon_Base::HandleFire, 1, true, m_WeaponData.m_FireRate);
+=======
+	UseAmmo();
+	//FireWeapon();
+>>>>>>> origin/master
 }
 
 bool AWeapon_Base::ServeHandleFire_Validate()
 {
 	return true;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
 void AWeapon_Base::ServeHandleFire_Implementation()
 {
 	HandleFire();
 }
 
+<<<<<<< HEAD
 bool AWeapon_Base::CanReload()
 {
 	if (m_CurrentClip == 0 || m_CurrentAmmo == m_WeaponData.m_AmmoPerClip || m_WeaponState == EWeaponState::Reloading)
@@ -254,6 +291,8 @@ bool AWeapon_Base::CanReload()
 		return true;
 	}
 }
+=======
+>>>>>>> origin/master
 
 bool AWeapon_Base::CanFire()
 {
@@ -263,6 +302,7 @@ bool AWeapon_Base::CanFire()
 	}
 	return true;
 }
+<<<<<<< HEAD
 
 float AWeapon_Base::PlayWeaponAnimation(UAnimMontage * WeaponAnimation)
 {
@@ -274,3 +314,5 @@ void AWeapon_Base::PlayWeaponSound(USoundBase * WeaponSound)
 {
 	UGameplayStatics::PlaySoundAtLocation(this, WeaponSound, GetActorLocation());
 }
+=======
+>>>>>>> origin/master

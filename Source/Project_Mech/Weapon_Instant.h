@@ -22,10 +22,13 @@ struct FInstantWeaponData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData")
 	int m_SpreadSeed;
 
+<<<<<<< HEAD
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData")
 	float m_DeltaSpread;
 	
 
+=======
+>>>>>>> origin/master
 	FInstantWeaponData()
 	{
 		m_ShootingRange = 100;
@@ -49,8 +52,14 @@ private:
 
 	FVector m_EndTracePoint;
 
+<<<<<<< HEAD
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData" ,  meta = (AllowPrivateAccess = "true"))
 	FInstantWeaponData m_InstantWeaponData;
 
+=======
+	FInstantWeaponData m_InstantWeaponData;
+
+	float m_CurrentSpreadDegree;
+>>>>>>> origin/master
 	
 };

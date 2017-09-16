@@ -27,9 +27,12 @@ struct FWeaponData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 	int m_AmmoPerShoot;
+<<<<<<< HEAD
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData")
 	float m_FireRate;
+=======
+>>>>>>> origin/master
 	
 	FWeaponData()
 	{
@@ -39,7 +42,10 @@ struct FWeaponData
 		m_AmmoPerClip = 20;
 		m_InitialClips = m_MaxAmmo / m_AmmoPerClip - 1;
 		m_AmmoPerShoot = 1;
+<<<<<<< HEAD
 		m_FireRate = 0.3;
+=======
+>>>>>>> origin/master
 	}
 };
 UENUM(BlueprintType)		
@@ -102,9 +108,12 @@ public:
 	void StopReload();
 
 
+<<<<<<< HEAD
 	UFUNCTION(reliable, server, WithValidation)
 	void ServeStopFire();
 
+=======
+>>>>>>> origin/master
 	bool CanFire();
 
 	void SetOwningPawn(class AMech_Base * NewOwner);
@@ -115,7 +124,11 @@ public:
 
 	void HandleFire();
 
+<<<<<<< HEAD
 	virtual void FireWeapon()PURE_VIRTUAL(AWeapon_Base::FireWeapon, );
+=======
+	virtual void FireWeapon()PURE_VIRTUAL(AShooterWeapon::FireWeapon, );
+>>>>>>> origin/master
 
 	UFUNCTION(reliable,server, WithValidation)
 	void ServeHandleFire();
@@ -124,9 +137,12 @@ public:
 
 	FVector GetMuzzleDirection();
 
+<<<<<<< HEAD
 	void SetCurrentSpreadDegree(float DeltaDegree) { m_CurrentSpreadDegree += DeltaDegree; };
 
 	float GetCurrentSpreadDegree() { return m_CurrentSpreadDegree; }
+=======
+>>>>>>> origin/master
 
 
 private:
@@ -154,6 +170,14 @@ private:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Sound", meta = (AllowPrivateAccess = "true"))
 	USoundBase * m_ShootSound;
+<<<<<<< HEAD
+=======
+
+	FTimerHandle m_ReloadTimerHandle;
+
+	FName m_WeaponMuzzleName;
+
+>>>>>>> origin/master
 
 	UPROPERTY(Replicated , BlueprintReadWrite, EditAnywhere, Category = "ammo", meta = (AllowPrivateAccess = "true"))
 	int m_CurrentAmmo;
@@ -164,9 +188,15 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ammo", meta = (AllowPrivateAccess = "true"))
 	int m_AmmosInClip;
 
+<<<<<<< HEAD
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ammo", meta = (AllowPrivateAccess = "true"))
 	float m_CurrentSpreadDegree;
 
+=======
+
+
+	int m_ShootCount;
+>>>>>>> origin/master
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Owner", meta = (AllowPrivateAccess = "true"))
 	class AMech_Base * m_OwnerCharacter;
 
