@@ -7,7 +7,7 @@
 // Sets default values
 AMech_Base::AMech_Base()
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+ 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	m_DashSpeed = 1.5;
 	m_CurrentWeapon = CreateDefaultSubobject<AWeapon_Base>(TEXT("Weapon"));
@@ -29,7 +29,7 @@ void AMech_Base::BeginPlay()
 	if (m_CurrentWeapon)
 	{
 		EquipWeapon(m_CurrentWeapon);
-
+		
 	}
 
 
@@ -47,11 +47,11 @@ void AMech_Base::Tick(float DeltaTime)
 	}
 	/*if (CheckIsMovingForward() && m_IsWantToRun)
 	{
-	SetDashing(true);
+		SetDashing(true);
 	}
-	else
+	else 
 	{
-	SetDashing(false);
+		SetDashing(false);
 	}*/
 
 }
@@ -59,14 +59,14 @@ void AMech_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AMech_Base, m_IsDashing);
-	DOREPLIFETIME(AMech_Base, m_CurrentWeapon);
+	DOREPLIFETIME(AMech_Base, m_CurrentWeapon); 
 }
 
 // Called to bind functionality to input
 void AMech_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+    
 
 }
 void AMech_Base::Shoot_Begin()
@@ -95,10 +95,10 @@ void AMech_Base::Dash_End()
 }
 void  AMech_Base::SetDashing(bool CanRun)
 {
-
+	
 	if (Role < ROLE_Authority)
-	{
-
+    {
+		
 		ServerSetDashing(CanRun);
 		UE_LOG(LogTemp, Warning, TEXT("Call on the serve"));
 	}

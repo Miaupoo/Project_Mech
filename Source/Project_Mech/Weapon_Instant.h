@@ -1,3 +1,5 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -8,22 +10,25 @@ struct FInstantWeaponData
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "WeaponData")
 	int m_ShootingRange;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData")
-		int m_MaxSpreadDegree;
+	int m_MaxSpreadDegree;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData")
-		int m_DamageAmount;
+	int m_DamageAmount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData")
-		int m_SpreadSeed;
+	int m_SpreadSeed;
 
+<<<<<<< HEAD
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData")
-		float m_DeltaSpread;
+	float m_DeltaSpread;
+	
 
-
+=======
+>>>>>>> origin/master
 	FInstantWeaponData()
 	{
 		m_ShootingRange = 100;
@@ -47,8 +52,14 @@ private:
 
 	FVector m_EndTracePoint;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData", meta = (AllowPrivateAccess = "true"))
-		FInstantWeaponData m_InstantWeaponData;
+<<<<<<< HEAD
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData" ,  meta = (AllowPrivateAccess = "true"))
+	FInstantWeaponData m_InstantWeaponData;
 
+=======
+	FInstantWeaponData m_InstantWeaponData;
 
+	float m_CurrentSpreadDegree;
+>>>>>>> origin/master
+	
 };

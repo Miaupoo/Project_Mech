@@ -1,9 +1,16 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #include "Weapon_Instant.h"
+<<<<<<< HEAD
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Mech_PlayerControlled.h"
 #include "Mech_Base.h"
+=======
+#include "Kismet/KismetSystemLibrary.h"
+
+>>>>>>> origin/master
 
 AWeapon_Instant::AWeapon_Instant()
 {
@@ -13,7 +20,8 @@ AWeapon_Instant::AWeapon_Instant()
 void AWeapon_Instant::WeaponTrace()
 {
 	//UKismetSystemLibrary::LineTraceSingle(this, GetMuzzleLocation(), m_EndTracePoint,ETraceTypeQuery::TraceTypeQuery1,true,NULL,)
-	GetWorld()->LineTraceSingleByChannel(m_HitResult, GetActorLocation() + GetActorForwardVector() * 50, GetActorLocation() + (GetActorForwardVector() * m_InstantWeaponData.m_ShootingRange), ECollisionChannel::ECC_Pawn);
+<<<<<<< HEAD
+	GetWorld()->LineTraceSingleByChannel(m_HitResult, GetActorLocation() + GetActorForwardVector() * 50 , GetActorLocation() + (GetActorForwardVector() * m_InstantWeaponData.m_ShootingRange), ECollisionChannel::ECC_Pawn);
 }
 void AWeapon_Instant::FireWeapon()
 {
@@ -28,7 +36,7 @@ void AWeapon_Instant::FireWeapon()
 		AMech_Base * GotHitActor = Cast<AMech_Base>(m_HitResult.GetActor());
 		if (GotHitActor)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("HitActor"));
+		  UE_LOG(LogTemp, Warning, TEXT("HitActor"));
 		}
 		UE_LOG(LogTemp, Warning, TEXT("HitSomething"));
 	}
@@ -37,7 +45,17 @@ void AWeapon_Instant::FireWeapon()
 		UE_LOG(LogTemp, Warning, TEXT("nothit"));
 
 	}
-	
+   
 
+=======
+}
+void AWeapon_Instant::FireWeapon()
+{
+	FRandomStream RandomStream(m_InstantWeaponData.m_SpreadSeed);
+	float HalfCone = FMath::DegreesToRadians(m_CurrentSpreadDegree * 0.5);
+	m_EndTracePoint = GetMuzzleLocation() + (RandomStream.VRandCone(GetMuzzleDirection(), HalfCone, HalfCone) * m_InstantWeaponData.m_ShootingRange);
+	m_CurrentSpreadDegree++;
+	WeaponTrace();
+>>>>>>> origin/master
 
 }
