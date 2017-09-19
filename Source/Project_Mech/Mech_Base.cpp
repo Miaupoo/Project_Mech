@@ -160,23 +160,14 @@ void AMech_Base::OnRep_CurrentWeapon(AWeapon_Base * weapon)
 void AMech_Base::ModifyHp(float DeltaHp) 
 {
 	UE_LOG(LogTemp, Warning, TEXT("ModifyHp"));
+	m_CurrentHp -= DeltaHp;
 
-	if (Role == ROLE_Authority)
-	{
-		m_CurrentHp -= DeltaHp;
-
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("not on the serve"));
-
-	}
 }
 
 
 void AMech_Base::GotShoot(AActor* DamagedActor, float Damage, class AController* InstigatedBy, FVector HitLocation, class UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection, const class UDamageType* DamageType, AActor*  DamageCauser)
 {
 	
-	UE_LOG(LogTemp, Warning, TEXT("motherfucker"));
+	UE_LOG(LogTemp, Warning, TEXT("GotShoot!!!!!!"));
 	ModifyHp(Damage);
 }

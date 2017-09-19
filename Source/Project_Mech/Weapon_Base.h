@@ -47,7 +47,6 @@ enum class EWeaponState : uint8
 	Shooting,
 	Reloading
 };
-
 UCLASS()
 class PROJECT_MECH_API AWeapon_Base : public AActor
 {
@@ -116,17 +115,17 @@ public:
 	virtual void FireWeapon()PURE_VIRTUAL(AWeapon_Base::FireWeapon, );
 
 	UFUNCTION(reliable, server, WithValidation)
-		void ServeHandleFire();
+	void ServeHandleFire();
 
-	FVector GetMuzzleLocation();
 
-	FVector GetMuzzleDirection();
+
 
 	void SetCurrentSpreadDegree(float DeltaDegree) { m_CurrentSpreadDegree += DeltaDegree; };
 
 	float GetCurrentSpreadDegree() { return m_CurrentSpreadDegree; }
 
 	AMech_Base * GetPawn() { return m_OwnerCharacter; }
+
 
 
 
@@ -169,12 +168,11 @@ private:
 		float m_CurrentSpreadDegree;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere, Category = "Owner", meta = (AllowPrivateAccess = "true"))
-		class AMech_Base * m_OwnerCharacter;
+	class AMech_Base * m_OwnerCharacter;
 
 	FTimerHandle m_ReloadTimerHandle;
 
 	FTimerHandle m_FiringTimerHandle;
 
-	FName m_WeaponMuzzleName;
 
 };

@@ -53,7 +53,7 @@ public:
 
 	virtual void ToggleAimming();
 
-
+	class UCameraComponent * GetCamera() { return m_PlayerCamera; }
 private:
 
 

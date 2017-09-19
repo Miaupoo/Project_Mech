@@ -9,23 +9,23 @@ struct FInstantWeaponData
 {
 	GENERATED_USTRUCT_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData")
-		int m_ShootingRange;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData")
+	int m_ShootingRange;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData")
-		int m_MaxSpreadDegree;
+	int m_MaxSpreadDegree;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData")
-		int m_DamageAmount;
+	int m_DamageAmount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData")
-		int m_SpreadSeed;
+	int m_SpreadSeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData")
-		float m_DeltaSpread;
+	float m_DeltaSpread;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData")
-		TSubclassOf<UDamageType>m_DamageType;
+	TSubclassOf<UDamageType>m_DamageType;
 
 
 	FInstantWeaponData()
@@ -44,14 +44,22 @@ public:
 
 	virtual void FireWeapon()override;
 
+	virtual FVector GetMuzzleDirection();
+
+	virtual FVector GetMuzzleLocation();
+
+
 private:
 
 	FHitResult m_HitResult;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData", meta = (AllowPrivateAccess = "true"))
 	FVector m_EndTracePoint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponData", meta = (AllowPrivateAccess = "true"))
-		FInstantWeaponData m_InstantWeaponData;
+	FInstantWeaponData m_InstantWeaponData;
+
+	
 
 
 };

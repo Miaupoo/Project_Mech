@@ -1,9 +1,10 @@
 #include "Weapon_Instant.h"
-#include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Mech_PlayerControlled.h"
 #include "Mech_Base.h"
+#include "Camera/CameraComponent.h"
+#include "Engine/World.h"
 
 AWeapon_Instant::AWeapon_Instant()
 {
@@ -13,7 +14,8 @@ AWeapon_Instant::AWeapon_Instant()
 void AWeapon_Instant::WeaponTrace()
 {
 	//UKismetSystemLibrary::LineTraceSingle(this, GetMuzzleLocation(), m_EndTracePoint,ETraceTypeQuery::TraceTypeQuery1,true,NULL,)
-	GetWorld()->LineTraceSingleByChannel(m_HitResult, GetActorLocation() + GetActorForwardVector() * 50, GetActorLocation() + (GetActorForwardVector() * m_InstantWeaponData.m_ShootingRange), ECollisionChannel::ECC_Pawn);
+
+	GetWorld()->LineTraceSingleByChannel(m_HitResult, GetMuzzleLocation(), GetMuzzleLocation() + (GetMuzzleDirection() * m_InstantWeaponData.m_ShootingRange), ECollisionChannel::ECC_Pawn);
 }
 void AWeapon_Instant::FireWeapon()
 {
@@ -41,5 +43,28 @@ void AWeapon_Instant::FireWeapon()
 	}
 
 
+
+}
+FVector AWeapon_Instant::GetMuzzleDirection()
+{
+	AMech_PlayerControlled * Owner = Cast<AMech_PlayerControlled>(GetPawn());
+	FVector Direction;
+	if (Owner)
+	{
+		Direction = Owner->GetCamera()->GetForwardVector();
+	}
+	return Direction;
+}
+
+FVector AWeapon_Instant::GetMuzzleLocation()
+{
+	AMech_PlayerControlled * Owner = Cast<AMech_PlayerControlled>(GetPawn());
+	FVector Location;
+
+	if (Owner)
+	{
+		return Location = Owner->GetCamera()->GetComponentLocation();
+	}
+	return Location;
 
 }

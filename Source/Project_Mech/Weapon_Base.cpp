@@ -173,15 +173,6 @@ void AWeapon_Base::SetOwningPawn(AMech_Base * NewOwner)
 
 }
 
-FVector AWeapon_Base::GetMuzzleLocation()
-{
-	return m_WeaponMesh->GetSocketLocation(m_WeaponMuzzleName);
-}
-
-FVector AWeapon_Base::GetMuzzleDirection()
-{
-	return m_WeaponMesh->GetForwardVector();
-}
 
 void AWeapon_Base::StartFire()
 {

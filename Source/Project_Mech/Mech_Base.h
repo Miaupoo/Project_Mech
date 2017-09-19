@@ -45,7 +45,6 @@ public:
 
 
 	virtual void Dash_Begin();
-
 	virtual void Dash_End();
 
 	// 
@@ -67,7 +66,6 @@ public:
 	void OnRep_CurrentWeapon(AWeapon_Base * weapon);
 
 	void ModifyHp(float DeltaHp);
-	
 private:
 
 	// the current hp of the mech
